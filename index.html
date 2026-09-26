@@ -1,190 +1,248 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ko">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
     <title id="docTitle">Auto Lang TTS & Translator</title>
-    <link rel="stylesheet" href="style.css">
-</head>
-<body>
-
-<div class="container">
-    <!-- 스마트폰 상단 툴바 (설정 & 대화기록 모달 버튼) -->
-    <div class="mobile-header-bar">
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="container">
+      <!-- 스마트폰 상단 툴바 (설정 & 대화기록 모달 버튼) -->
+      <div class="mobile-header-bar">
         <h1 id="uiTitle">🗣️ 4개국어 번역기</h1>
         <div class="header-btn-group">
-            <button id="btnOpenSettings" class="btn-icon" title="환경설정">⚙️ 설정</button>
-            <button id="btnManageLogs" class="btn-icon" title="기록 보관함">📜 기록</button>
+          <button id="btnOpenSettings" class="btn-icon" title="환경설정">
+            ⚙️ 설정
+          </button>
+          <button id="btnManageLogs" class="btn-icon" title="기록 보관함">
+            📜 기록
+          </button>
         </div>
-    </div>
+      </div>
 
-    <!-- 대화 자동 기록 상태 알림 바 -->
-    <div class="log-status-bar">
+      <!-- 대화 자동 기록 상태 알림 바 -->
+      <div class="log-status-bar">
         <span>📝 자동 대화 기록 모드:</span>
         <span id="logModeStatus" class="status-tag off">OFF</span>
-    </div>
+      </div>
 
-    <!-- 텍스트 및 음성/사진 입력 영역 -->
-    <div class="input-group">
+      <!-- 텍스트 및 음성/사진 입력 영역 -->
+      <div class="input-group">
         <div class="label-row">
-            <label for="inputText" id="uiLabelInput">연습할 문장 입력 (큰 글씨 지원):</label>
-            <button id="btnClear" class="btn-secondary">🗑️ 지우기</button>
+          <label for="inputText" id="uiLabelInput"
+            >연습할 문장 입력 (큰 글씨 지원):</label
+          >
+          <button id="btnClear" class="btn-secondary">🗑️ 지우기</button>
         </div>
 
         <div class="stt-btn-grid">
-            <button id="btnSTTEn" class="btn-stt">🎤 English</button>
-            <button id="btnSTTKo" class="btn-stt">🎤 한국어</button>
-            <button id="btnSTTZh" class="btn-stt">🎤 中文</button>
-            <button id="btnSTTDe" class="btn-stt">🎤 Deutsch</button>
+          <button id="btnSTTEn" class="btn-stt">🎤 English</button>
+          <button id="btnSTTKo" class="btn-stt">🎤 한국어</button>
+          <button id="btnSTTZh" class="btn-stt">🎤 中文</button>
+          <button id="btnSTTDe" class="btn-stt">🎤 Deutsch</button>
         </div>
 
         <textarea id="inputText" placeholder=""></textarea>
 
         <!-- 사진 번역 및 이미지 첨부 영역 -->
         <div class="photo-trans-bar">
-            <label for="imageInput" class="btn-photo">📷 사진 속 글자 읽기 및 번역</label>
-            <input type="file" id="imageInput" accept="image/*" style="display:none;">
-            <div id="ocrStatus" class="ocr-status-text"></div>
+          <label for="imageInput" class="btn-photo"
+            >📷 사진 속 글자 읽기 및 번역</label
+          >
+          <input
+            type="file"
+            id="imageInput"
+            accept="image/*"
+            style="display: none"
+          />
+          <div id="ocrStatus" class="ocr-status-text"></div>
         </div>
-    </div>
+      </div>
 
-    <!-- 오디오 재생 컨트롤 -->
-    <div class="controls">
+      <!-- 오디오 재생 컨트롤 -->
+      <div class="controls">
         <div class="btn-group main-controls">
-            <button id="btnPlay" class="btn-primary btn-large">▶ 전체 읽기</button>
-            <button id="btnPause" class="btn-secondary btn-large">⏸️ 일시정지</button>
-            <button id="btnStop" class="btn-secondary btn-large">⏹️ 정지</button>
+          <button id="btnPlay" class="btn-primary btn-large">
+            ▶ 전체 읽기
+          </button>
+          <button id="btnPause" class="btn-secondary btn-large">
+            ⏸️ 일시정지
+          </button>
+          <button id="btnStop" class="btn-secondary btn-large">⏹️ 정지</button>
         </div>
 
         <div class="rate-control">
-            <label for="rate" id="uiLabelSpeed">읽기 속도:</label>
-            <input type="range" id="rate" min="0.5" max="1.5" step="0.1" value="1.0">
-            <span id="rateValue">1.0x</span>
+          <label for="rate" id="uiLabelSpeed">읽기 속도:</label>
+          <input
+            type="range"
+            id="rate"
+            min="0.5"
+            max="1.5"
+            step="0.1"
+            value="1.0"
+          />
+          <span id="rateValue">1.0x</span>
         </div>
-    </div>
+      </div>
 
-    <!-- 마이크 발음 녹음 영역 -->
-    <div class="rec-controls">
+      <!-- 마이크 발음 녹음 영역 -->
+      <div class="rec-controls">
         <div class="btn-group">
-            <button id="btnRecStart" class="btn-danger">🎙️ 내 발음 녹음 시작</button>
-            <button id="btnRecStop" class="btn-secondary" disabled>⏹️ 녹음 정지</button>
+          <button id="btnRecStart" class="btn-danger">
+            🎙️ 내 발음 녹음 시작
+          </button>
+          <button id="btnRecStop" class="btn-secondary" disabled>
+            ⏹️ 녹음 정지
+          </button>
         </div>
-        <audio id="audioPlayback" controls style="display:none;"></audio>
-        <a id="btnDownload" class="btn-primary" style="display:none; text-decoration:none;">💾 녹음 저장</a>
-    </div>
+        <audio id="audioPlayback" controls style="display: none"></audio>
+        <a
+          id="btnDownload"
+          class="btn-primary"
+          style="display: none; text-decoration: none"
+          >💾 녹음 저장</a
+        >
+      </div>
 
-    <!-- 문장 목록 및 1줄씩/연속 넘김 스크롤 제어 영역 -->
-    <div class="sentences-container">
+      <!-- 문장 목록 및 1줄씩/연속 넘김 스크롤 제어 영역 -->
+      <div class="sentences-container">
         <div class="list-header-row">
-            <label id="uiLabelList">분석 및 번역 문장 목록:</label>
-            <!-- 줄넘김 / 스크롤 제어 버튼 그룹 -->
-            <div class="scroll-control-group">
-                <button id="btnScrollPrev" class="btn-scroll">▲ 이전 줄</button>
-                <button id="btnScrollNext" class="btn-scroll">▼ 다음 줄</button>
-                <button id="btnAutoScrollToggle" class="btn-scroll highlight">🔄 연속 넘김</button>
-            </div>
+          <label id="uiLabelList">분석 및 번역 문장 목록:</label>
+          <!-- 줄넘김 / 스크롤 제어 버튼 그룹 -->
+          <div class="scroll-control-group">
+            <button id="btnScrollPrev" class="btn-scroll">▲ 이전 줄</button>
+            <button id="btnScrollNext" class="btn-scroll">▼ 다음 줄</button>
+            <button id="btnAutoScrollToggle" class="btn-scroll highlight">
+              🔄 연속 넘김
+            </button>
+          </div>
         </div>
 
         <div id="sentenceList" class="scrollable-sentence-box"></div>
-    </div>
+      </div>
 
-    <!-- Trip.com 제휴 카드 -->
-    <div class="trip-affiliate-card">
+      <!-- Trip.com 제휴 카드 -->
+      <div class="trip-affiliate-card">
         <div class="trip-info">
-            <h4 id="uiTripTitle">✈️ Trip.com 특별 제휴 혜택</h4>
-            <p id="uiTripDesc">전 세계 호텔, 항공권 및 여행 상품을 최저가로 예약하세요!</p>
+          <h4 id="uiTripTitle">✈️ Trip.com 특별 제휴 혜택</h4>
+          <p id="uiTripDesc">
+            전 세계 호텔, 항공권 및 여행 상품을 최저가로 예약하세요!
+          </p>
         </div>
-        <a href="https://www.trip.com/t/77sfZ47lEW2" target="_blank" rel="noopener noreferrer" class="btn-trip" id="uiTripBtn">
-            Trip.com 바로가기 ➔
+        <a
+          href="https://www.trip.com/t/77sfZ47lEW2"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="btn-trip"
+          id="uiTripBtn"
+        >
+          Trip.com 바로가기 ➔
         </a>
-    </div>
+      </div>
 
-    <footer>
+      <footer>
         <p>Web Speech API & Google Translate | (c) Evergreen 2026</p>
-    </footer>
-</div>
+      </footer>
+    </div>
 
-<!-- ================= [모달 1: 별도 환경설정 창] ================= -->
-<div id="settingsModal" class="modal">
-    <div class="modal-content">
+    <!-- ================= [모달 1: 별도 환경설정 창] ================= -->
+    <div id="settingsModal" class="modal">
+      <div class="modal-content">
         <div class="modal-header">
-            <h3>⚙️ 환경 설정 (옵션)</h3>
-            <span id="closeSettingsModal" class="close-btn">&times;</span>
+          <h3>⚙️ 환경 설정 (옵션)</h3>
+          <span id="closeSettingsModal" class="close-btn">&times;</span>
         </div>
         <div class="modal-body">
-            <div class="setting-item">
-                <label id="uiLangLabel">🌐 메뉴 언어 선택:</label>
-                <select id="uiLangSelect" class="large-select">
-                    <option value="ko">한국어 (Korean)</option>
-                    <option value="en">English</option>
-                    <option value="zh">中文 (Chinese)</option>
-                    <option value="de">Deutsch (German)</option>
-                </select>
-            </div>
+          <div class="setting-item">
+            <label id="uiLangLabel">🌐 메뉴 언어 선택:</label>
+            <select id="uiLangSelect" class="large-select">
+              <option value="ko">한국어 (Korean)</option>
+              <option value="en">English</option>
+              <option value="zh">中文 (Chinese)</option>
+              <option value="de">Deutsch (German)</option>
+            </select>
+          </div>
 
-            <div class="setting-item horizontal">
-                <span id="uiLabelShowTrans">번역문 화면 표시:</span>
-                <label class="switch">
-                    <input type="checkbox" id="toggleTrans" checked>
-                    <span class="slider"></span>
-                </label>
-            </div>
+          <div class="setting-item horizontal">
+            <span>🔂 문장별 단독 재생 (자동 넘김 방지):</span>
+            <label class="switch">
+              <input type="checkbox" id="toggleSingleMode" />
+              <span class="slider"></span>
+            </label>
+          </div>
 
-            <div class="setting-item">
-                <label id="uiLabelTransLang1">번역 언어 1:</label>
-                <select id="transLangSelect1" class="large-select">
-                    <option value="ko">한국어 (Korean)</option>
-                    <option value="en">English</option>
-                    <option value="zh">中文 (Chinese)</option>
-                    <option value="de">Deutsch (German)</option>
-                </select>
-            </div>
+          <div class="setting-item">
+            <label id="uiLabelTransLang1">번역 언어 1:</label>
+            <select id="transLangSelect1" class="large-select">
+              <option value="ko">한국어 (Korean)</option>
+              <option value="en">English</option>
+              <option value="zh">中文 (Chinese)</option>
+              <option value="de">Deutsch (German)</option>
+            </select>
+          </div>
 
-            <div class="setting-item">
-                <label id="uiLabelTransLang2">번역 언어 2:</label>
-                <select id="transLangSelect2" class="large-select">
-                    <option value="en">English</option>
-                    <option value="ko">한국어 (Korean)</option>
-                    <option value="zh">中文 (Chinese)</option>
-                    <option value="de">Deutsch (German)</option>
-                    <option value="none">사용 안 함 (None)</option>
-                </select>
-            </div>
+          <div class="setting-item">
+            <label id="uiLabelTransLang2">번역 언어 2:</label>
+            <select id="transLangSelect2" class="large-select">
+              <option value="en">English</option>
+              <option value="ko">한국어 (Korean)</option>
+              <option value="zh">中文 (Chinese)</option>
+              <option value="de">Deutsch (German)</option>
+              <option value="none">사용 안 함 (None)</option>
+            </select>
+          </div>
 
-            <div class="setting-item horizontal">
-                <span>📝 대화 자동 기록 모드:</span>
-                <label class="switch">
-                    <input type="checkbox" id="toggleLogMode">
-                    <span class="slider"></span>
-                </label>
-            </div>
+          <div class="setting-item horizontal">
+            <span>📝 대화 자동 기록 모드:</span>
+            <label class="switch">
+              <input type="checkbox" id="toggleLogMode" />
+              <span class="slider"></span>
+            </label>
+          </div>
         </div>
         <div class="modal-footer">
-            <button id="btnSaveSettings" class="btn-primary btn-large" style="width:100%;">설정 완료 및 닫기</button>
+          <button
+            id="btnSaveSettings"
+            class="btn-primary btn-large"
+            style="width: 100%"
+          >
+            설정 완료 및 닫기
+          </button>
         </div>
+      </div>
     </div>
-</div>
 
-<!-- ================= [모달 2: 대화 기록 보관함 창] ================= -->
-<div id="logModal" class="modal">
-    <div class="modal-content">
+    <!-- ================= [모달 2: 대화 기록 보관함 창] ================= -->
+    <div id="logModal" class="modal">
+      <div class="modal-content">
         <div class="modal-header">
-            <h3>📜 대화 기록 보관함</h3>
-            <span id="closeLogModal" class="close-btn">&times;</span>
+          <h3>📜 대화 기록 보관함</h3>
+          <span id="closeLogModal" class="close-btn">&times;</span>
         </div>
         <div class="modal-body">
-            <div id="logHistoryList"></div>
+          <div id="logHistoryList"></div>
         </div>
         <div class="modal-footer">
-            <button id="btnExportLogs" class="btn-secondary">💾 백업 다운로드</button>
-            <button id="btnImportLogs" class="btn-secondary">📁 파일 열기</button>
-            <input type="file" id="logFileInput" accept=".json" style="display: none;">
-            <button id="btnClearAllLogs" class="btn-danger">🗑️ 전체 삭제</button>
+          <button id="btnExportLogs" class="btn-secondary">
+            💾 백업 다운로드
+          </button>
+          <button id="btnImportLogs" class="btn-secondary">📁 파일 열기</button>
+          <input
+            type="file"
+            id="logFileInput"
+            accept=".json"
+            style="display: none"
+          />
+          <button id="btnClearAllLogs" class="btn-danger">🗑️ 전체 삭제</button>
         </div>
+      </div>
     </div>
-</div>
 
-<script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
-<script src="script.js"></script>
-</body>
+    <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+    <script src="script.js"></script>
+  </body>
 </html>

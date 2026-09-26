@@ -168,6 +168,7 @@ let langRes = i18n[currentLang];
 
 const uiLangSelect = document.getElementById('uiLangSelect');
 const toggleTrans = document.getElementById('toggleTrans');
+const toggleSingleMode = document.getElementById('toggleSingleMode'); // 단독 재생 옵션
 const transLangSelect1 = document.getElementById('transLangSelect1');
 const transLangSelect2 = document.getElementById('transLangSelect2');
 const inputText = document.getElementById('inputText');
@@ -176,7 +177,7 @@ const rateInput = document.getElementById('rate');
 const rateValue = document.getElementById('rateValue');
 const audioPlayback = document.getElementById('audioPlayback');
 
-// 모달 제어
+// 모달 요소
 const settingsModal = document.getElementById('settingsModal');
 const btnOpenSettings = document.getElementById('btnOpenSettings');
 const closeSettingsModal = document.getElementById('closeSettingsModal');
@@ -194,12 +195,12 @@ const btnImportLogs = document.getElementById('btnImportLogs');
 const logFileInput = document.getElementById('logFileInput');
 const btnClearAllLogs = document.getElementById('btnClearAllLogs');
 
-// 스크롤 넘김 제어 버튼
+// 스크롤 제어
 const btnScrollPrev = document.getElementById('btnScrollPrev');
 const btnScrollNext = document.getElementById('btnScrollNext');
 const btnAutoScrollToggle = document.getElementById('btnAutoScrollToggle');
 
-// 사진 번역 제어
+// OCR 이미지 인식
 const imageInput = document.getElementById('imageInput');
 const ocrStatus = document.getElementById('ocrStatus');
 
@@ -219,7 +220,7 @@ let isLogModeOn = false;
 let isAutoScroll = false;
 let autoScrollInterval = null;
 
-// --- [모달 이벤트 연동] ---
+// 모달 제어
 btnOpenSettings.addEventListener('click', () => settingsModal.style.display = 'flex');
 closeSettingsModal.addEventListener('click', () => settingsModal.style.display = 'none');
 btnSaveSettings.addEventListener('click', () => {
@@ -234,7 +235,7 @@ btnManageLogs.addEventListener('click', () => {
 });
 closeLogModal.addEventListener('click', () => logModal.style.display = 'none');
 
-// --- [사진 속 글자 인식 OCR 및 자동 입력] ---
+// 사진 OCR
 imageInput.addEventListener('change', async (e) => {
     const file = e.target.files[0];
     if (!file) return;
@@ -261,14 +262,9 @@ imageInput.addEventListener('change', async (e) => {
     }
 });
 
-// --- [스크롤 넘김 & 연속 1줄씩 넘김 시스템] ---
-btnScrollPrev.addEventListener('click', () => {
-    sentenceList.scrollBy({ top: -60, behavior: 'smooth' });
-});
-
-btnScrollNext.addEventListener('click', () => {
-    sentenceList.scrollBy({ top: 60, behavior: 'smooth' });
-});
+// 스크롤 컨트롤
+btnScrollPrev.addEventListener('click', () => sentenceList.scrollBy({ top: -60, behavior: 'smooth' }));
+btnScrollNext.addEventListener('click', () => sentenceList.scrollBy({ top: 60, behavior: 'smooth' }));
 
 btnAutoScrollToggle.addEventListener('click', () => {
     isAutoScroll = !isAutoScroll;
@@ -277,7 +273,7 @@ btnAutoScrollToggle.addEventListener('click', () => {
         btnAutoScrollToggle.style.background = "#dc2626";
         autoScrollInterval = setInterval(() => {
             sentenceList.scrollBy({ top: 40, behavior: 'smooth' });
-        }, 2000); // 2초 간격 1줄씩 연속 스크롤
+        }, 2000);
     } else {
         btnAutoScrollToggle.textContent = "🔄 연속 넘김";
         btnAutoScrollToggle.style.background = "#2563eb";
@@ -285,7 +281,7 @@ btnAutoScrollToggle.addEventListener('click', () => {
     }
 });
 
-// --- [대화 기록 시스템 (서버 전송 없이 로컬 백업)] ---
+// 기록 관련
 function getLocalLogs() { return JSON.parse(localStorage.getItem('app_dialogue_logs') || '[]'); }
 function saveLocalLogs(logs) { localStorage.setItem('app_dialogue_logs', JSON.stringify(logs)); }
 
@@ -395,7 +391,7 @@ logFileInput.addEventListener('change', (e) => {
     reader.readAsText(file);
 });
 
-// --- [번역 엔진 & TTS/STT] ---
+// --- [번역 및 TTS 설정] ---
 function applyMenuTranslationRules(menuLang) {
     if (menuLang === 'ko') { transLangSelect1.value = 'ko'; transLangSelect2.value = 'en'; }
     else if (menuLang === 'zh') { transLangSelect1.value = 'zh'; transLangSelect2.value = 'en'; }
@@ -425,12 +421,16 @@ function loadSavedState() {
 
     const savedShowTrans = localStorage.getItem('app_show_trans');
     if (savedShowTrans !== null) toggleTrans.checked = (savedShowTrans === 'true');
+
+    const savedSingleMode = localStorage.getItem('app_single_mode');
+    if (savedSingleMode !== null && toggleSingleMode) toggleSingleMode.checked = (savedSingleMode === 'true');
 }
 
 function saveCurrentState() {
     localStorage.setItem('app_input_text', inputText.value);
     localStorage.setItem('app_ui_lang', currentLang);
     localStorage.setItem('app_show_trans', toggleTrans.checked);
+    if (toggleSingleMode) localStorage.setItem('app_single_mode', toggleSingleMode.checked);
     localStorage.setItem('app_trans_lang1', transLangSelect1.value);
     localStorage.setItem('app_trans_lang2', transLangSelect2.value);
 }
@@ -561,11 +561,13 @@ function createSentenceObj(text, langCode) {
     return { text, langCode, lang: langMap[langCode], translation1: '', translation2: '' };
 }
 
+// --- [핵심: 단독 재생 모드 ON/OFF 처리 렌더링] ---
 async function renderSentences() {
     sentences = parseSentences(inputText.value);
     sentenceList.innerHTML = '';
 
     const showTrans = toggleTrans.checked;
+    const isSingleMode = toggleSingleMode ? toggleSingleMode.checked : false;
     const targetLang1 = transLangSelect1.value;
     const targetLang2 = transLangSelect2.value;
 
@@ -588,12 +590,27 @@ async function renderSentences() {
         let trans1Tag = langRes[`tag${targetLang1.charAt(0).toUpperCase() + targetLang1.slice(1)}`] || targetLang1;
         let trans2Tag = langRes[`tag${targetLang2.charAt(0).toUpperCase() + targetLang2.slice(1)}`] || targetLang2;
 
+        let playControlsHtml = '';
+        if (isSingleMode) {
+            // 단독 재생 모드 ON: 각 언어별 전용 버튼 생성
+            playControlsHtml = `
+                <div class="single-play-group">
+                    <button class="btn-lang-play" onclick="playSingleLanguageText('${encodeURIComponent(item.text)}', '${item.langCode}')">🔊 ${tagLabel}</button>
+                    ${item.translation1 ? `<button class="btn-lang-play" onclick="playSingleLanguageText('${encodeURIComponent(item.translation1)}', '${targetLang1}')">🔊 ${trans1Tag}</button>` : ''}
+                    ${item.translation2 ? `<button class="btn-lang-play" onclick="playSingleLanguageText('${encodeURIComponent(item.translation2)}', '${targetLang2}')">🔊 ${trans2Tag}</button>` : ''}
+                </div>
+            `;
+        } else {
+            // 단독 재생 모드 OFF: 기존 원터치 연쇄 재생
+            playControlsHtml = `<button class="play-single-btn" onclick="playSingle(${index})">▶</button>`;
+        }
+
         card.innerHTML = `
             <div style="display:flex; justify-content:space-between; align-items:center;">
                 <div class="sentence-text">${item.text}</div>
                 <div>
                     <span class="lang-tag ${item.langCode}">${tagLabel}</span>
-                    <button class="play-single-btn" onclick="playSingle(${index})">▶</button>
+                    ${!isSingleMode ? playControlsHtml : ''}
                 </div>
             </div>
             ${showTrans ? `
@@ -602,10 +619,27 @@ async function renderSentences() {
                     ${item.translation2 ? `<div class="translation-text">💬 <b>${trans2Tag}:</b> ${item.translation2}</div>` : ''}
                 </div>
             ` : ''}
+            ${isSingleMode ? playControlsHtml : ''}
         `;
         sentenceList.appendChild(card);
     }
 }
+
+// 특정 언어 문장 1개만 단독 재생 (다음 문장 넘김 없음)
+window.playSingleLanguageText = function(encodedText, langCode) {
+    const text = decodeURIComponent(encodedText);
+    synth.cancel();
+
+    const langMap = { 'en': 'en-US', 'ko': 'ko-KR', 'zh': 'zh-CN', 'de': 'de-DE' };
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = langMap[langCode] || 'en-US';
+    utterance.rate = parseFloat(rateInput.value);
+
+    const voice = getBestVoice(langCode);
+    if (voice) utterance.voice = voice;
+
+    synth.speak(utterance);
+};
 
 function updateActiveCard(index) {
     document.querySelectorAll('.sentence-card').forEach((card, i) => {
@@ -753,9 +787,9 @@ inputText.addEventListener('input', () => { stopPlayback(); saveCurrentState(); 
 rateInput.addEventListener('input', e => { rateValue.textContent = `${parseFloat(e.target.value).toFixed(1)}x`; });
 
 btnPlay.addEventListener('click', startPlayback);
-btnPause.addEventListener('click', pausePlayback);
+btnPause.addEventListener('click", pausePlayback);
 btnStop.addEventListener('click', stopPlayback);
 
-// 초기 실행
+// 초기화
 loadSavedState();
 updateLanguage(currentLang, false);
