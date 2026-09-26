@@ -6,14 +6,14 @@
       name="viewport"
       content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
     />
-    <title id="docTitle">Auto Lang TTS & Translator</title>
+    <title id="docTitle">Auto Lang TTS & Translator v1.0</title>
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
     <div class="container">
-      <!-- 스마트폰 상단 툴바 (설정 & 대화기록 모달 버튼) -->
+      <!-- 스마트폰 상단 툴바 -->
       <div class="mobile-header-bar">
-        <h1 id="uiTitle">🗣️ 4개국어 번역기</h1>
+        <h1 id="uiTitle">🗣️ 4개국어 번역기 v1.0</h1>
         <div class="header-btn-group">
           <button id="btnOpenSettings" class="btn-icon" title="환경설정">
             ⚙️ 설정
@@ -108,11 +108,10 @@
         >
       </div>
 
-      <!-- 문장 목록 및 1줄씩/연속 넘김 스크롤 제어 영역 -->
+      <!-- 문장 목록 및 스크롤 제어 영역 -->
       <div class="sentences-container">
         <div class="list-header-row">
           <label id="uiLabelList">분석 및 번역 문장 목록:</label>
-          <!-- 줄넘김 / 스크롤 제어 버튼 그룹 -->
           <div class="scroll-control-group">
             <button id="btnScrollPrev" class="btn-scroll">▲ 이전 줄</button>
             <button id="btnScrollNext" class="btn-scroll">▼ 다음 줄</button>
@@ -129,9 +128,7 @@
       <div class="trip-affiliate-card">
         <div class="trip-info">
           <h4 id="uiTripTitle">✈️ Trip.com 특별 제휴 혜택</h4>
-          <p id="uiTripDesc">
-            전 세계 호텔, 항공권 및 여행 상품을 최저가로 예약하세요!
-          </p>
+          <p id="uiTripDesc">전 세계 호텔, 항공권을 최저가로 예약하세요!</p>
         </div>
         <a
           href="https://www.trip.com/t/77sfZ47lEW2"
@@ -145,11 +142,11 @@
       </div>
 
       <footer>
-        <p>Web Speech API & Google Translate | (c) Evergreen 2026</p>
+        <p>Web Speech API & Google Translate | (c) Evergreen 2026 v1.0</p>
       </footer>
     </div>
 
-    <!-- ================= [모달 1: 별도 환경설정 창] ================= -->
+    <!-- ================= [모달 1: 환경설정] ================= -->
     <div id="settingsModal" class="modal">
       <div class="modal-content">
         <div class="modal-header">
@@ -165,6 +162,14 @@
               <option value="zh">中文 (Chinese)</option>
               <option value="de">Deutsch (German)</option>
             </select>
+          </div>
+
+          <div class="setting-item horizontal">
+            <span id="uiLabelShowTrans">번역문 화면 표시:</span>
+            <label class="switch">
+              <input type="checkbox" id="toggleTrans" checked />
+              <span class="slider"></span>
+            </label>
           </div>
 
           <div class="setting-item horizontal">
@@ -216,7 +221,7 @@
       </div>
     </div>
 
-    <!-- ================= [모달 2: 대화 기록 보관함 창] ================= -->
+    <!-- ================= [모달 2: 대화 기록 보관함] ================= -->
     <div id="logModal" class="modal">
       <div class="modal-content">
         <div class="modal-header">
@@ -242,7 +247,10 @@
       </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"
+      async
+    ></script>
     <script src="script.js"></script>
   </body>
 </html>
