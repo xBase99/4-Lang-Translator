@@ -501,7 +501,7 @@ document.addEventListener('keydown', e => {
     }
 });
 
-// i18n 완전 번역 사전
+// i18n 번역 사전
 const i18n = {
     ko: {
         title: "🗣️ 4개국어 번역기",
@@ -640,20 +640,21 @@ btnManageLogs.addEventListener('click', () => {
 });
 closeLogModal.addEventListener('click', () => logModal.style.display = 'none');
 
-// 사진 OCR
+// 사진 OCR (메모리 누수 방지 예외처리 보완)
 imageInput.addEventListener('change', async (e) => {
     const file = e.target.files[0];
     if (!file) return;
 
     ocrStatus.textContent = "📷 분석 중...";
+    let worker = null;
     try {
         if (typeof Tesseract === 'undefined') {
             alert("OCR 라이브러리를 불러오는 중입니다. 잠시 후 다시 시도해 주세요.");
+            ocrStatus.textContent = "";
             return;
         }
-        const worker = await Tesseract.createWorker('eng+kor+chi_sim+deu');
+        worker = await Tesseract.createWorker('eng+kor+chi_sim+deu');
         const ret = await worker.recognize(file);
-        await worker.terminate();
 
         const text = ret.data.text.trim();
         if (text) {
@@ -667,6 +668,8 @@ imageInput.addEventListener('change', async (e) => {
         }
     } catch (err) {
         ocrStatus.textContent = "❌ 분석 오류";
+    } finally {
+        if (worker) await worker.terminate();
     }
 });
 
@@ -687,7 +690,7 @@ btnAutoScrollToggle.addEventListener('click', () => {
     }
 });
 
-// 기록 관련
+// 기록 관리
 function getLocalLogs() { return JSON.parse(localStorage.getItem('app_dialogue_logs') || '[]'); }
 function saveLocalLogs(logs) { localStorage.setItem('app_dialogue_logs', JSON.stringify(logs)); }
 
@@ -797,7 +800,7 @@ logFileInput.addEventListener('change', (e) => {
     reader.readAsText(file);
 });
 
-// 기본 번역 언어 매핑
+// 메뉴 번역 기본 세팅
 function applyMenuTranslationRules(menuLang) {
     if (menuLang === 'ko') { transLangSelect1.value = 'ko'; transLangSelect2.value = 'en'; }
     else if (menuLang === 'zh') { transLangSelect1.value = 'zh'; transLangSelect2.value = 'en'; }
@@ -841,7 +844,6 @@ function saveCurrentState() {
     localStorage.setItem('app_trans_lang2', transLangSelect2.value);
 }
 
-// 다국어 UI 완전 전환
 function updateLanguage(lang, autoUpdateDefaults = false) {
     currentLang = lang;
     langRes = i18n[lang];
@@ -915,6 +917,7 @@ let synth = window.speechSynthesis;
 let voices = [];
 let mediaRecorder = null;
 let audioChunks = [];
+let currentSpeechRecognition = null;
 
 const regEnglish = /[a-zA-Z]/;
 const regKorean = /[\u3131-\u318E\uAC00-\uD7A3]/;
@@ -937,7 +940,6 @@ function loadVoices() { voices = synth.getVoices(); }
 loadVoices();
 if (speechSynthesis.onvoiceschanged !== undefined) speechSynthesis.onvoiceschanged = loadVoices;
 
-// [버그 수정 완료] 표준 언어 코드 정규화
 function normalizeLangCode(code) {
     if (!code) return 'en-US';
     const clean = code.toString().toLowerCase().trim();
@@ -948,7 +950,6 @@ function normalizeLangCode(code) {
     return 'en-US';
 }
 
-// [버그 수정 완료] TTS 음성 엔진 정밀 검색
 function getBestVoice(langCode) {
     if (!voices || voices.length === 0) voices = synth.getVoices();
     const targetTag = normalizeLangCode(langCode);
@@ -1010,8 +1011,8 @@ async function renderSentences() {
     
     const showTrans = toggleTrans ? toggleTrans.checked : true;
     const isSingleMode = toggleSingleMode ? toggleSingleMode.checked : false;
-    const targetLang1 = transLangSelect1.value;
-    const targetLang2 = transLangSelect2.value;
+    const targetLang1 = transLangSelect1 ? transLangSelect1.value : 'ko';
+    const targetLang2 = transLangSelect2 ? transLangSelect2.value : 'en';
 
     if (showTrans) {
         await Promise.all(sentences.map(async (item) => {
@@ -1067,7 +1068,7 @@ async function renderSentences() {
     sentenceList.appendChild(fragment);
 }
 
-// [버그 수정 완료] 개별 단독 발음 재생 함수
+// 개별 단독 발음 재생
 window.playSingleLanguageText = function(encodedText, langCode) {
     const text = decodeURIComponent(encodedText);
     if (!text || !text.trim()) return;
@@ -1096,6 +1097,24 @@ function updateActiveCard(index) {
     });
 }
 
+// 헬퍼: Utterance 재생을 Promise로 래핑하여 스피치 큐 꼬임 방지
+function speakUtteranceAsync(text, langCode) {
+    return new Promise((resolve) => {
+        if (!text || !isPlaying) { resolve(); return; }
+        
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = normalizeLangCode(langCode);
+        utterance.rate = parseFloat(rateInput.value);
+        const voice = getBestVoice(langCode);
+        if (voice) utterance.voice = voice;
+
+        utterance.onend = () => resolve();
+        utterance.onerror = () => resolve();
+
+        synth.speak(utterance);
+    });
+}
+
 async function playNative(index) {
     if (index >= sentences.length || !isPlaying) {
         isPlaying = false; updateActiveCard(-1); btnPlay.textContent = langRes.btnPlay; return;
@@ -1110,38 +1129,21 @@ async function playNative(index) {
     const targetLang1 = transLangSelect1.value;
     const targetLang2 = transLangSelect2.value;
 
-    const origUtterance = new SpeechSynthesisUtterance(current.text);
-    origUtterance.lang = normalizeLangCode(current.langCode);
-    origUtterance.rate = parseFloat(rateInput.value);
-    const origVoice = getBestVoice(current.langCode);
-    if (origVoice) origUtterance.voice = origVoice;
+    // 순차 재생 처리
+    await speakUtteranceAsync(current.text, current.langCode);
 
-    let queue = [origUtterance];
-
-    if (showTrans) {
-        if (current.translation1) {
-            const u1 = new SpeechSynthesisUtterance(current.translation1);
-            u1.lang = normalizeLangCode(targetLang1);
-            u1.rate = parseFloat(rateInput.value);
-            const v1 = getBestVoice(targetLang1);
-            if (v1) u1.voice = v1;
-            queue.push(u1);
-        }
-        if (current.translation2) {
-            const u2 = new SpeechSynthesisUtterance(current.translation2);
-            u2.lang = normalizeLangCode(targetLang2);
-            u2.rate = parseFloat(rateInput.value);
-            const v2 = getBestVoice(targetLang2);
-            if (v2) u2.voice = v2;
-            queue.push(u2);
-        }
+    if (isPlaying && showTrans && current.translation1) {
+        await speakUtteranceAsync(current.translation1, targetLang1);
     }
 
-    const lastUtterance = queue[queue.length - 1];
-    lastUtterance.onend = () => { if (isPlaying) { currentIndex++; playNative(currentIndex); } };
-    lastUtterance.onerror = () => { if (isPlaying) { currentIndex++; playNative(currentIndex); } };
+    if (isPlaying && showTrans && current.translation2) {
+        await speakUtteranceAsync(current.translation2, targetLang2);
+    }
 
-    queue.forEach(u => synth.speak(u));
+    if (isPlaying) {
+        currentIndex++;
+        playNative(currentIndex);
+    }
 }
 
 function startPlayback() {
@@ -1162,11 +1164,20 @@ const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecogni
 
 function startSpeechRecognition(langMode, btnElement, sourceLangName) {
     if (!SpeechRecognition) { alert(langRes.errNoSTT); return; }
+    
+    if (currentSpeechRecognition) {
+        try { currentSpeechRecognition.abort(); } catch(e){}
+    }
+
     const recognition = new SpeechRecognition();
+    currentSpeechRecognition = recognition;
     recognition.lang = langMode;
     recognition.interimResults = false;
 
-    try { recognition.start(); btnElement.textContent = langRes.btnSTTListening; btnElement.style.opacity = '0.7'; } catch (e) { recognition.stop(); }
+    recognition.onstart = () => {
+        btnElement.textContent = langRes.btnSTTListening;
+        btnElement.style.opacity = '0.7';
+    };
 
     recognition.onresult = async (event) => {
         const spokenText = event.results[0][0].transcript;
@@ -1181,6 +1192,8 @@ function startSpeechRecognition(langMode, btnElement, sourceLangName) {
 
     recognition.onerror = () => { alert(langRes.errMic); resetSTTButtons(); };
     recognition.onend = () => resetSTTButtons();
+
+    try { recognition.start(); } catch (e) { resetSTTButtons(); }
 }
 
 function resetSTTButtons() {
@@ -1192,6 +1205,7 @@ function resetSTTButtons() {
     btnSTTKo.style.opacity = '1.0';
     btnSTTZh.style.opacity = '1.0';
     btnSTTDe.style.opacity = '1.0';
+    currentSpeechRecognition = null;
 }
 
 btnSTTEn.addEventListener('click', () => startSpeechRecognition('en-US', btnSTTEn, 'EN'));
