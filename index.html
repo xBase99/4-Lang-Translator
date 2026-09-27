@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title id="docTitle">Auto Lang TTS & Translator v1.01</title>
+    <title id="docTitle">🗣️ 4개국어 번역기 v1.01</title>
     <style>
         :root {
             --primary: #2563eb;
@@ -11,8 +11,8 @@
             --bg: #f8fafc;
             --card-bg: #ffffff;
             --text: #0f172a;
-            --text-muted: #475569;
-            --border: #cbd5e1;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
             --highlight: #dbeafe;
             --highlight-border: #2563eb;
             --tag-en-bg: #e0e7ff;
@@ -46,10 +46,9 @@
             display: flex;
             justify-content: center;
             align-items: flex-start;
-            padding: 0;
+            padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
         }
 
-        /* 모바일 풀 스크린 자동 맞춤 */
         .container {
             width: 100%;
             max-width: 600px;
@@ -58,41 +57,36 @@
             padding: 1rem;
             display: flex;
             flex-direction: column;
-            box-shadow: 0 0 20px rgba(0,0,0,0.05);
-        }
-
-        @media (min-width: 600px) {
-            body { padding: 1rem 0; }
-            .container {
-                min-height: auto;
-                border-radius: 16px;
-                border: 1px solid var(--border);
-            }
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
         }
 
         .mobile-header-bar {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 0.75rem;
             padding-bottom: 0.75rem;
             border-bottom: 2px solid var(--border);
+            margin-bottom: 0.75rem;
         }
 
-        .mobile-header-bar h1 { font-size: 1.35rem; font-weight: 800; }
-        .header-btn-group { display: flex; gap: 0.5rem; }
+        .mobile-header-bar h1 {
+            font-size: 1.3rem;
+            font-weight: 800;
+        }
+
+        .header-btn-group {
+            display: flex;
+            gap: 0.4rem;
+        }
 
         .btn-icon {
-            padding: 0.5rem 0.75rem;
-            font-size: 0.9rem;
+            padding: 0.4rem 0.7rem;
+            font-size: 0.85rem;
             font-weight: 700;
             background-color: #f1f5f9;
             border: 1px solid var(--border);
             border-radius: 8px;
             cursor: pointer;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.25rem;
         }
 
         .log-status-bar {
@@ -105,32 +99,37 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 0.85rem;
+            margin-bottom: 0.75rem;
         }
 
         .status-tag {
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             font-weight: 800;
-            padding: 0.2rem 0.6rem;
+            padding: 0.2rem 0.5rem;
             border-radius: 4px;
             color: white;
         }
         .status-tag.on { background-color: #16a34a; }
         .status-tag.off { background-color: #94a3b8; }
 
-        .label-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; }
+        .label-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.4rem;
+        }
         label { font-weight: 700; font-size: 0.95rem; }
 
         .stt-btn-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 0.5rem;
-            margin-bottom: 0.75rem;
+            gap: 0.4rem;
+            margin-bottom: 0.5rem;
         }
 
         .btn-stt {
-            padding: 0.75rem 0.5rem;
-            font-size: 1rem;
+            padding: 0.65rem 0.4rem;
+            font-size: 0.95rem;
             font-weight: 700;
             background-color: #059669;
             color: white;
@@ -142,23 +141,23 @@
         textarea {
             width: 100%;
             height: 120px;
-            padding: 0.85rem;
+            padding: 0.8rem;
             border: 2px solid var(--border);
             border-radius: 12px;
-            font-size: 1.1rem;
+            font-size: 1.05rem;
             line-height: 1.5;
             outline: none;
             resize: vertical;
         }
 
-        .photo-trans-bar { margin-top: 0.75rem; margin-bottom: 1rem; }
+        .photo-trans-bar { margin: 0.5rem 0; }
         .btn-photo {
             display: block;
             text-align: center;
-            padding: 0.8rem;
+            padding: 0.7rem;
             background-color: #4f46e5;
             color: white;
-            font-size: 1rem;
+            font-size: 0.95rem;
             font-weight: 700;
             border-radius: 8px;
             cursor: pointer;
@@ -167,8 +166,8 @@
         .ocr-status-text {
             font-size: 0.85rem;
             font-weight: 700;
-            color: #2563eb;
-            margin-top: 0.4rem;
+            color: var(--primary);
+            margin-top: 0.3rem;
             text-align: center;
         }
 
@@ -176,24 +175,20 @@
             background: #f8fafc;
             border: 1px solid var(--border);
             border-radius: 12px;
-            padding: 0.8rem;
-            margin-bottom: 1rem;
+            padding: 0.75rem;
+            margin-bottom: 0.75rem;
         }
 
         .main-controls { display: grid; grid-template-columns: 1.2fr 1fr 1fr; gap: 0.4rem; }
-        .btn-large { padding: 0.75rem 0.4rem; font-size: 0.95rem; font-weight: 700; cursor: pointer; }
+        .btn-large { padding: 0.7rem 0.4rem; font-size: 0.9rem; font-weight: 700; cursor: pointer; }
 
         .btn-primary { background-color: var(--primary); color: white; border: none; border-radius: 8px; }
         .btn-secondary { background-color: white; color: var(--text); border: 1px solid var(--border); border-radius: 8px; }
         .btn-danger { background-color: var(--record-bg); color: white; border: none; border-radius: 8px; }
 
-        .rate-control { display: flex; align-items: center; gap: 0.5rem; margin-top: 0.75rem; font-size: 0.9rem; font-weight: 700; }
-        .rate-control input { flex: 1; }
+        .rate-control { display: flex; align-items: center; gap: 0.5rem; margin-top: 0.5rem; font-size: 0.9rem; font-weight: 700; }
 
-        .rec-controls .btn-group { display: flex; gap: 0.5rem; margin-bottom: 0.5rem; }
-        .rec-controls .btn-group button { flex: 1; padding: 0.65rem; font-weight: 700; }
-
-        .list-header-row { display: flex; flex-direction: column; gap: 0.5rem; margin-bottom: 0.5rem; }
+        .list-header-row { display: flex; flex-direction: column; gap: 0.4rem; margin-bottom: 0.4rem; }
         .scroll-control-group { display: flex; gap: 0.4rem; }
 
         .btn-scroll {
@@ -221,10 +216,10 @@
         }
 
         .sentence-card {
-            padding: 0.85rem;
+            padding: 0.75rem;
             border-radius: 8px;
             border: 1px solid var(--border);
-            margin-bottom: 0.6rem;
+            margin-bottom: 0.5rem;
             background: #f8fafc;
         }
 
@@ -233,13 +228,19 @@
             border: 2px solid var(--highlight-border);
         }
 
-        .sentence-text { font-size: 1.1rem; font-weight: 700; line-height: 1.4; }
-        .translation-block { margin-top: 0.5rem; padding-top: 0.5rem; border-top: 1px dashed var(--border); }
-        .translation-text { font-size: 1rem; color: #1e293b; line-height: 1.4; }
+        .sentence-text { font-size: 1.05rem; font-weight: 700; line-height: 1.4; }
+        .translation-block { margin-top: 0.4rem; padding-top: 0.4rem; border-top: 1px dashed var(--border); }
+        .translation-text { font-size: 0.95rem; color: #1e293b; line-height: 1.4; }
 
-        .single-play-group { display: flex; gap: 0.4rem; flex-wrap: wrap; margin-top: 0.5rem; }
+        .single-play-group {
+            display: flex;
+            gap: 0.3rem;
+            flex-wrap: wrap;
+            margin-top: 0.4rem;
+        }
+
         .btn-lang-play {
-            padding: 0.4rem 0.6rem;
+            padding: 0.3rem 0.6rem;
             font-size: 0.8rem;
             font-weight: 700;
             background-color: #eff6ff;
@@ -249,24 +250,20 @@
             cursor: pointer;
         }
 
-        .play-single-btn { background: transparent; border: none; font-size: 1.2rem; color: var(--primary); cursor: pointer; }
+        .play-single-btn {
+            background: transparent;
+            border: none;
+            font-size: 1.1rem;
+            color: var(--primary);
+            cursor: pointer;
+        }
 
-        .lang-tag { font-size: 0.75rem; font-weight: 800; padding: 0.2rem 0.4rem; border-radius: 4px; }
+        .lang-tag { font-size: 0.7rem; font-weight: 800; padding: 0.15rem 0.35rem; border-radius: 4px; }
         .lang-tag.en { background: var(--tag-en-bg); color: var(--tag-en-color); }
         .lang-tag.ko { background: var(--tag-ko-bg); color: var(--tag-ko-color); }
         .lang-tag.zh { background: var(--tag-zh-bg); color: var(--tag-zh-color); }
         .lang-tag.de { background: var(--tag-de-bg); color: var(--tag-de-color); }
 
-        .trip-affiliate-card {
-            margin-top: 1rem; padding: 0.85rem;
-            background: linear-gradient(135deg, #287dfa 0%, #1052c5 100%);
-            border-radius: 12px; color: white; display: flex; flex-direction: column; gap: 0.6rem; text-align: center;
-        }
-
-        .btn-trip { background-color: #ff9500; color: white; text-decoration: none; font-weight: 700; padding: 0.65rem; border-radius: 8px; }
-        footer { margin-top: auto; padding-top: 1rem; text-align: center; font-size: 0.8rem; color: var(--text-muted); }
-
-        /* 모달 스타일 */
         .modal {
             display: none;
             position: fixed;
@@ -286,50 +283,57 @@
             max-height: 85vh;
             display: flex;
             flex-direction: column;
-            padding: 1.25rem;
+            padding: 1.2rem;
             box-shadow: 0 20px 25px -5px rgba(0,0,0,0.3);
         }
 
-        .modal-header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 0.75rem; border-bottom: 1px solid var(--border); }
-        .close-btn { font-size: 1.8rem; cursor: pointer; }
-        .modal-body { padding: 1rem 0; overflow-y: auto; flex: 1; }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 0.6rem; border-bottom: 1px solid var(--border); }
+        .close-btn { font-size: 1.6rem; cursor: pointer; }
+        .modal-body { padding: 0.8rem 0; overflow-y: auto; flex: 1; }
 
-        .setting-item { margin-bottom: 1.1rem; display: flex; flex-direction: column; gap: 0.4rem; }
+        .setting-item { margin-bottom: 1rem; display: flex; flex-direction: column; gap: 0.3rem; }
         .setting-item.horizontal { flex-direction: row; justify-content: space-between; align-items: center; }
 
-        .large-select { padding: 0.75rem; font-size: 1rem; font-weight: 700; border-radius: 8px; border: 1px solid var(--border); background: white; }
+        .large-select { padding: 0.6rem; font-size: 1rem; font-weight: 700; border-radius: 8px; border: 1px solid var(--border); background: white; }
 
-        .switch { position: relative; display: inline-block; width: 48px; height: 26px; }
+        .switch { position: relative; display: inline-block; width: 46px; height: 24px; }
         .switch input { opacity: 0; width: 0; height: 0; }
-        .slider { position: absolute; cursor: pointer; top:0; left:0; right:0; bottom:0; background:#ccc; transition:.3s; border-radius:26px; }
-        .slider:before { position: absolute; content:""; height:20px; width:20px; left:3px; bottom:3px; background:white; transition:.3s; border-radius:50%; }
+        .slider { position: absolute; cursor: pointer; top:0; left:0; right:0; bottom:0; background:#ccc; transition:.3s; border-radius:24px; }
+        .slider:before { position: absolute; content:""; height:18px; width:18px; left:3px; bottom:3px; background:white; transition:.3s; border-radius:50%; }
         input:checked + .slider { background: var(--primary); }
         input:checked + .slider:before { transform: translateX(22px); }
+
+        .trip-affiliate-card {
+            margin-top: auto;
+            padding: 0.8rem;
+            background: linear-gradient(135deg, #287dfa 0%, #1052c5 100%);
+            border-radius: 12px; color: white; display: flex; flex-direction: column; gap: 0.5rem; text-align: center;
+        }
+
+        .btn-trip { background-color: #ff9500; color: white; text-decoration: none; font-weight: 700; padding: 0.6rem; border-radius: 8px; }
+        footer { margin-top: 0.8rem; text-align: center; font-size: 0.8rem; color: var(--text-muted); }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <!-- 헤더 -->
     <div class="mobile-header-bar">
         <h1 id="uiTitle">🗣️ 4개국어 번역기</h1>
         <div class="header-btn-group">
-            <button id="btnOpenSettings" class="btn-icon">⚙️ <span id="uiBtnSettings">설정</span></button>
-            <button id="btnManageLogs" class="btn-icon">📜 <span id="uiBtnLogs">기록</span></button>
+            <button id="btnOpenSettings" class="btn-icon">⚙️ 설정</button>
+            <button id="btnManageLogs" class="btn-icon">📜 기록</button>
         </div>
     </div>
 
-    <!-- 상태 알림 바 -->
     <div class="log-status-bar">
-        <span id="uiLogModeLabel">📝 자동 대화 기록 모드:</span>
+        <span id="uiLogBarText">📝 대화 기록 모드:</span>
         <span id="logModeStatus" class="status-tag off">OFF</span>
     </div>
 
-    <!-- 입력 영역 -->
     <div class="input-group">
         <div class="label-row">
             <label for="inputText" id="uiLabelInput">연습할 문장 입력 (큰 글씨 지원):</label>
-            <button id="btnClear" class="btn-secondary" style="padding: 0.25rem 0.6rem; font-weight:700;">🗑️ <span id="uiBtnClear">지우기</span></button>
+            <button id="btnClear" class="btn-secondary">🗑️ 지우기</button>
         </div>
 
         <div class="stt-btn-grid">
@@ -341,15 +345,13 @@
 
         <textarea id="inputText" placeholder=""></textarea>
 
-        <!-- 사진 번역 -->
         <div class="photo-trans-bar">
-            <label for="imageInput" class="btn-photo" id="uiBtnPhoto">📷 사진 속 글자 읽기 및 번역</label>
+            <label for="imageInput" id="uiLabelPhoto" class="btn-photo">📷 사진 속 글자 읽기 및 번역</label>
             <input type="file" id="imageInput" accept="image/*" style="display:none;">
             <div id="ocrStatus" class="ocr-status-text"></div>
         </div>
     </div>
 
-    <!-- 컨트롤 -->
     <div class="controls">
         <div class="btn-group main-controls">
             <button id="btnPlay" class="btn-primary btn-large">▶ 전체 읽기</button>
@@ -364,34 +366,31 @@
         </div>
     </div>
 
-    <!-- 녹음 영역 -->
     <div class="rec-controls">
-        <div class="btn-group">
+        <div class="btn-group" style="display:grid; grid-template-columns: 1fr 1fr; gap:0.4rem;">
             <button id="btnRecStart" class="btn-danger">🎙️ 내 발음 녹음 시작</button>
             <button id="btnRecStop" class="btn-secondary" disabled>⏹️ 녹음 정지</button>
         </div>
         <audio id="audioPlayback" controls style="display:none; width:100%; margin-top:0.5rem;"></audio>
-        <a id="btnDownload" class="btn-primary" style="display:none; text-decoration:none; text-align:center; padding:0.5rem; border-radius:8px; margin-top:0.5rem; font-weight:700;">💾 녹음 저장</a>
+        <a id="btnDownload" class="btn-primary" style="display:none; text-decoration:none; text-align:center; padding:0.5rem; margin-top:0.4rem; font-weight:700;">💾 녹음 저장</a>
     </div>
 
-    <!-- 목록 및 스크롤 -->
     <div class="sentences-container">
         <div class="list-header-row">
             <label id="uiLabelList">분석 및 번역 문장 목록:</label>
             <div class="scroll-control-group">
-                <button id="btnScrollPrev" class="btn-scroll">▲ <span id="uiBtnPrev">이전 줄</span></button>
-                <button id="btnScrollNext" class="btn-scroll">▼ <span id="uiBtnNext">다음 줄</span></button>
-                <button id="btnAutoScrollToggle" class="btn-scroll highlight">🔄 <span id="uiBtnAutoScroll">연속 넘김</span></button>
+                <button id="btnScrollPrev" class="btn-scroll">▲ 이전 줄</button>
+                <button id="btnScrollNext" class="btn-scroll">▼ 다음 줄</button>
+                <button id="btnAutoScrollToggle" class="btn-scroll highlight">🔄 연속 넘김</button>
             </div>
         </div>
 
         <div id="sentenceList" class="scrollable-sentence-box"></div>
     </div>
 
-    <!-- Trip.com 제휴 카드 -->
     <div class="trip-affiliate-card">
         <div class="trip-info">
-            <h4 id="uiTripTitle">✈️ Trip.com 특별 제휴 혜택</h4>
+            <h4 id="uiTripTitle">✈️ Trip.com 특별 혜택</h4>
             <p id="uiTripDesc">전 세계 호텔, 항공권을 최저가로 예약하세요!</p>
         </div>
         <a href="https://www.trip.com/t/77sfZ47lEW2" target="_blank" rel="noopener noreferrer" class="btn-trip" id="uiTripBtn">
@@ -400,11 +399,11 @@
     </div>
 
     <footer>
-        <p>Web Speech API & Google Translate | v1.01 | (c) Evergreen 2026</p>
+        <p>Web Speech API & Google Translate | v1.01 (c) Evergreen 2026</p>
     </footer>
 </div>
 
-<!-- ================= [모달 1: 환경설정] ================= -->
+<!-- 환경설정 모달 -->
 <div id="settingsModal" class="modal">
     <div class="modal-content">
         <div class="modal-header">
@@ -460,7 +459,7 @@
             </div>
 
             <div class="setting-item horizontal">
-                <span id="uiLabelAutoLogMode">📝 대화 자동 기록 모드:</span>
+                <span id="uiLabelLogMode">📝 대화 자동 기록 모드:</span>
                 <label class="switch">
                     <input type="checkbox" id="toggleLogMode">
                     <span class="slider"></span>
@@ -473,28 +472,28 @@
     </div>
 </div>
 
-<!-- ================= [모달 2: 대화 기록 보관함] ================= -->
+<!-- 기록 보관함 모달 -->
 <div id="logModal" class="modal">
     <div class="modal-content">
         <div class="modal-header">
-            <h3 id="uiModalLogsTitle">📜 대화 기록 보관함</h3>
+            <h3 id="uiModalLogTitle">📜 대화 기록 보관함</h3>
             <span id="closeLogModal" class="close-btn">&times;</span>
         </div>
         <div class="modal-body">
             <div id="logHistoryList"></div>
         </div>
-        <div class="modal-footer" style="display:flex; gap:0.4rem; flex-wrap:wrap;">
-            <button id="btnExportLogs" class="btn-secondary" style="flex:1; padding:0.6rem;">💾 백업</button>
-            <button id="btnImportLogs" class="btn-secondary" style="flex:1; padding:0.6rem;">📁 열기</button>
+        <div class="modal-footer" style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:0.4rem;">
+            <button id="btnExportLogs" class="btn-secondary">💾 백업</button>
+            <button id="btnImportLogs" class="btn-secondary">📁 열기</button>
             <input type="file" id="logFileInput" accept=".json" style="display: none;">
-            <button id="btnClearAllLogs" class="btn-danger" style="flex:1; padding:0.6rem;">🗑️ 삭제</button>
+            <button id="btnClearAllLogs" class="btn-danger">🗑️ 삭제</button>
         </div>
     </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js" async></script>
 <script>
-// --- [보안 모듈] ---
+// 보안 처리
 document.addEventListener('contextmenu', e => e.preventDefault());
 document.addEventListener('keydown', e => {
     if (e.keyCode === 123 || (e.ctrlKey && e.shiftKey && [73, 74, 67].includes(e.keyCode)) || (e.ctrlKey && [85, 83].includes(e.keyCode))) {
@@ -502,67 +501,71 @@ document.addEventListener('keydown', e => {
     }
 });
 
-// --- [4개국어 UI 사전 - v1.01 전체 요소 동기화] ---
+// i18n 완전 번역 사전
 const i18n = {
     ko: {
-        title: "🗣️ 4개국어 번역기 v1.01", btnSettings: "설정", btnLogs: "기록", logModeLabel: "📝 자동 대화 기록 모드:",
-        labelInput: "연습할 문장 입력 (큰 글씨 지원):", btnClear: "지우기",
+        title: "🗣️ 4개국어 번역기",
+        btnSettings: "⚙️ 설정", btnLogs: "📜 기록", logBarText: "📝 대화 기록 모드:",
+        labelInput: "연습할 문장 입력 (큰 글씨 지원):", btnClear: "🗑️ 지우기",
         btnSTTEn: "🎤 English", btnSTTKo: "🎤 한국어", btnSTTZh: "🎤 中文", btnSTTDe: "🎤 Deutsch",
-        btnPhoto: "📷 사진 속 글자 읽기 및 번역", ocrAnalyzing: "📷 분석 중...", ocrComplete: "✅ 완료!", ocrFail: "❌ 글자 인식 실패", ocrErr: "❌ 분석 오류",
+        btnSTTListening: "🎙️ 듣는 중...", labelPhoto: "📷 사진 속 글자 읽기 및 번역",
         btnPlay: "▶ 전체 읽기", btnPlayActive: "▶ 읽는 중...", btnPause: "⏸️ 일시정지", btnResume: "▶ 다시 시작", btnStop: "⏹️ 정지",
-        labelSpeed: "읽기 속도:", btnRecStart: "🎙️ 발음 녹음 시작", btnRecRecording: "🎙️ 녹음 중...", btnRecStop: "⏹️ 정지", btnDownload: "💾 녹음 저장",
-        labelList: "분석 및 번역 문장 목록:", btnPrev: "이전 줄", btnNext: "다음 줄", btnAutoScroll: "연속 넘김",
-        modalSettingsTitle: "⚙️ 환경 설정 (옵션)", langLabel: "🌐 메뉴 언어 선택:", labelShowTrans: "번역문 화면 표시:", labelSingleMode: "🔂 문장별 단독 재생:", labelTransLang1: "번역 언어 1:", labelTransLang2: "번역 언어 2:", labelAutoLogMode: "📝 대화 자동 기록 모드:", btnSaveSettings: "설정 완료 및 닫기",
-        modalLogsTitle: "📜 대화 기록 보관함", btnExportLogs: "💾 백업", btnImportLogs: "📁 열기", btnClearAllLogs: "🗑️ 전체 삭제",
-        tagKo: "한국어", tagEn: "English", tagZh: "中文", tagDe: "Deutsch", tagNone: "사용 안 함",
+        labelSpeed: "읽기 속도:", btnRecStart: "🎙️ 발음 녹음 시작", btnRecRecording: "🎙️ 녹음 중...", btnRecStop: "⏹️ 정지", btnDownload: "💾 저장",
+        labelList: "분석 및 번역 문장 목록:", btnPrev: "▲ 이전 줄", btnNext: "▼ 다음 줄", btnAutoScroll: "🔄 연속 넘김", btnAutoScrollStop: "⏸️ 정지",
+        tagKo: "한국어", tagEn: "English", tagZh: "中文", tagDe: "Deutsch",
+        modalSettingsTitle: "⚙️ 환경 설정 (옵션)", labelLangSelect: "🌐 메뉴 언어 선택:", labelShowTrans: "번역문 화면 표시:", labelSingleMode: "🔂 문장별 단독 재생:", labelTransLang1: "번역 언어 1:", labelTransLang2: "번역 언어 2:", labelLogMode: "📝 대화 자동 기록 모드:", btnSaveSettings: "설정 완료 및 닫기",
+        modalLogTitle: "📜 대화 기록 보관함", btnExport: "💾 백업", btnImport: "📁 열기", btnClearAll: "🗑️ 삭제",
         placeholder: "문장을 입력하거나 음성/사진 버튼을 이용하세요...", errMic: "마이크 권한 필요", errNoSTT: "STT 미지원 브라우저",
-        tripTitle: "✈️ Trip.com 특별 혜택", tripDesc: "호텔, 항공권 최저가 예약!", tripBtn: "Trip.com 바로가기 ➔",
+        tripTitle: "✈️ Trip.com 특별 혜택", tripDesc: "전 세계 호텔, 항공권을 최저가로 예약하세요!", tripBtn: "Trip.com 바로가기 ➔",
         demoText: "Practice makes perfect! 오늘부터 4개국어 연습을 시작해봅시다. 欢迎! Guten Tag!"
     },
     en: {
-        title: "🗣️ 4-Lang Translator v1.01", btnSettings: "Settings", btnLogs: "Logs", logModeLabel: "📝 Auto Log Mode:",
-        labelInput: "Enter sentences (Large Text):", btnClear: "Clear",
+        title: "🗣️ 4-Lang Translator",
+        btnSettings: "⚙️ Settings", btnLogs: "📜 History", logBarText: "📝 Auto Log Mode:",
+        labelInput: "Enter Text to Practice:", btnClear: "🗑️ Clear",
         btnSTTEn: "🎤 English", btnSTTKo: "🎤 Korean", btnSTTZh: "🎤 Chinese", btnSTTDe: "🎤 German",
-        btnPhoto: "📷 Photo OCR & Translation", ocrAnalyzing: "📷 Analyzing...", ocrComplete: "✅ Complete!", ocrFail: "❌ OCR Failed", ocrErr: "❌ Error",
+        btnSTTListening: "🎙️ Listening...", labelPhoto: "📷 Photo OCR & Translate",
         btnPlay: "▶ Read All", btnPlayActive: "▶ Reading...", btnPause: "⏸️ Pause", btnResume: "▶ Resume", btnStop: "⏹️ Stop",
-        labelSpeed: "Speed:", btnRecStart: "🎙️ Record Voice", btnRecRecording: "🎙️ Recording...", btnRecStop: "⏹️ Stop", btnDownload: "💾 Save Audio",
-        labelList: "Sentence List:", btnPrev: "Prev Line", btnNext: "Next Line", btnAutoScroll: "Auto Scroll",
-        modalSettingsTitle: "⚙️ Settings", langLabel: "🌐 Menu Language:", labelShowTrans: "Show Translations:", labelSingleMode: "🔂 Single Play Mode:", labelTransLang1: "Translate 1:", labelTransLang2: "Translate 2:", labelAutoLogMode: "📝 Auto Log Mode:", btnSaveSettings: "Save & Close",
-        modalLogsTitle: "📜 Dialogue Logs", btnExportLogs: "💾 Backup", btnImportLogs: "📁 Open", btnClearAllLogs: "🗑️ Delete All",
-        tagKo: "Korean", tagEn: "English", tagZh: "Chinese", tagDe: "German", tagNone: "None",
-        placeholder: "Type text or use mic/photo buttons...", errMic: "Mic access required", errNoSTT: "STT not supported",
-        tripTitle: "✈️ Trip.com Deals", tripDesc: "Book global hotels & flights!", tripBtn: "Go to Trip.com ➔",
-        demoText: "Practice makes perfect! Today let's practice four languages. 欢迎! Guten Tag!"
+        labelSpeed: "Speed:", btnRecStart: "🎙️ Start Record", btnRecRecording: "🎙️ Recording...", btnRecStop: "⏹️ Stop", btnDownload: "💾 Save",
+        labelList: "Analyzed Sentences:", btnPrev: "▲ Prev", btnNext: "▼ Next", btnAutoScroll: "🔄 Auto Scroll", btnAutoScrollStop: "⏸️ Stop",
+        tagKo: "Korean", tagEn: "English", tagZh: "Chinese", tagDe: "German",
+        modalSettingsTitle: "⚙️ Preferences", labelLangSelect: "🌐 Menu Language:", labelShowTrans: "Show Translations:", labelSingleMode: "🔂 Single Play Mode:", labelTransLang1: "Translate 1:", labelTransLang2: "Translate 2:", labelLogMode: "📝 Auto Log Mode:", btnSaveSettings: "Save and Close",
+        modalLogTitle: "📜 Dialogue History", btnExport: "💾 Backup", btnImport: "📁 Open", btnClearAll: "🗑️ Clear All",
+        placeholder: "Type text or use voice/photo buttons...", errMic: "Mic access required", errNoSTT: "STT not supported",
+        tripTitle: "✈️ Trip.com Special Deals", tripDesc: "Book global hotels & flights at best rates!", tripBtn: "Go to Trip.com ➔",
+        demoText: "Practice makes perfect! Let's start practicing 4 languages today. 欢迎! Guten Tag!"
     },
     zh: {
-        title: "🗣️ 四语翻译器 v1.01", btnSettings: "设置", btnLogs: "记录", logModeLabel: "📝 自动记录模式:",
-        labelInput: "输入练习句子：", btnClear: "清空",
+        title: "🗣️ 四语翻译器",
+        btnSettings: "⚙️ 设置", btnLogs: "📜 记录", logBarText: "📝 自动记录模式:",
+        labelInput: "输入练习句子：", btnClear: "🗑️ 清空",
         btnSTTEn: "🎤 英语", btnSTTKo: "🎤 韩语", btnSTTZh: "🎤 中文", btnSTTDe: "🎤 德语",
-        btnPhoto: "📷 图片识别与翻译", ocrAnalyzing: "📷 分析中...", ocrComplete: "✅ 完成！", ocrFail: "❌ 识别失败", ocrErr: "❌ 错误",
+        btnSTTListening: "🎙️ 正在聆听...", labelPhoto: "📷 拍照识别并翻译",
         btnPlay: "▶ 朗读全部", btnPlayActive: "▶ 朗读中...", btnPause: "⏸️ 暂停", btnResume: "▶ 继续", btnStop: "⏹️ 停止",
-        labelSpeed: "语速:", btnRecStart: "🎙️ 开始录音", btnRecRecording: "🎙️ 录音中...", btnRecStop: "⏹️ 停止", btnDownload: "💾 保存录音",
-        labelList: "句子列表:", btnPrev: "上一句", btnNext: "下一句", btnAutoScroll: "自动滚动",
-        modalSettingsTitle: "⚙️ 设置", langLabel: "🌐 菜单语言:", labelShowTrans: "显示翻译:", labelSingleMode: "🔂 单句播放模式:", labelTransLang1: "翻译 1:", labelTransLang2: "翻译 2:", labelAutoLogMode: "📝 自动记录模式:", btnSaveSettings: "保存并关闭",
-        modalLogsTitle: "📜 对话记录", btnExportLogs: "💾 备份", btnImportLogs: "📁 打开", btnClearAllLogs: "🗑️ 全部删除",
-        tagKo: "韩语", tagEn: "English", tagZh: "中文", tagDe: "德语", tagNone: "无",
-        placeholder: "输入文本或使用语音/图片按钮...", errMic: "需要麦克风权限", errNoSTT: "不支持语音识别",
+        labelSpeed: "语速:", btnRecStart: "🎙️ 开始录音", btnRecRecording: "🎙️ 录音中...", btnRecStop: "⏹️ 停止", btnDownload: "💾 保存",
+        labelList: "解析句子:", btnPrev: "▲ 上一行", btnNext: "▼ 下一行", btnAutoScroll: "🔄 自动滚动", btnAutoScrollStop: "⏸️ 停止",
+        tagKo: "韩语", tagEn: "English", tagZh: "中文", tagDe: "德语",
+        modalSettingsTitle: "⚙️ 环境设置", labelLangSelect: "🌐 菜单语言:", labelShowTrans: "显示翻译:", labelSingleMode: "🔂 单句播放模式:", labelTransLang1: "翻译 1:", labelTransLang2: "翻译 2:", labelLogMode: "📝 自动记录模式:", btnSaveSettings: "保存并关闭",
+        modalLogTitle: "📜 对话记录库", btnExport: "💾 备份", btnImport: "📁 打开", btnClearAll: "🗑️ 清空",
+        placeholder: "在此输入文本...", errMic: "需要麦克风权限", errNoSTT: "不支持语音识别",
         tripTitle: "✈️ Trip.com 特惠", tripDesc: "预订全球酒店机票！", tripBtn: "前往 Trip.com ➔",
-        demoText: "Practice makes perfect! 今天开始练习四种语言。 欢迎! Guten Tag!"
+        demoText: "Practice makes perfect! 今天开始练习4种语言吧。 欢迎! Guten Tag!"
     },
     de: {
-        title: "🗣️ 4-Sprachen Übersetzer v1.01", btnSettings: "Optionen", btnLogs: "Verlauf", logModeLabel: "📝 Auto-Protokoll:",
-        labelInput: "Text eingeben:", btnClear: "Löschen",
+        title: "🗣️ 4-Sprachen Übersetzer",
+        btnSettings: "⚙️ Option", btnLogs: "📜 Verlauf", logBarText: "📝 Auto-Protokoll:",
+        labelInput: "Text eingeben:", btnClear: "🗑️ Löschen",
         btnSTTEn: "🎤 Englisch", btnSTTKo: "🎤 Koreanisch", btnSTTZh: "🎤 Chinesisch", btnSTTDe: "🎤 Deutsch",
-        btnPhoto: "📷 Foto OCR & Übersetzung", ocrAnalyzing: "📷 Analysiere...", ocrComplete: "✅ Fertig!", ocrFail: "❌ Fehlschlag", ocrErr: "❌ Fehler",
+        btnSTTListening: "🎙️ Hören...", labelPhoto: "📷 Foto scannen & übersetzen",
         btnPlay: "▶ Alle lesen", btnPlayActive: "▶ Liest...", btnPause: "⏸️ Pause", btnResume: "▶ Weiter", btnStop: "⏹️ Stopp",
-        labelSpeed: "Tempo:", btnRecStart: "🎙️ Aufnahme", btnRecRecording: "🎙️ Aufnahme...", btnRecStop: "⏹️ Stopp", btnDownload: "💾 Speichern",
-        labelList: "Satzliste:", btnPrev: "Vorherige", btnNext: "Nächste", btnAutoScroll: "Auto-Scroll",
-        modalSettingsTitle: "⚙️ Einstellungen", langLabel: "🌐 Menüsprache:", labelShowTrans: "Übersetzung:", labelSingleMode: "🔂 Einzelwiedergabe:", labelTransLang1: "Übersetzung 1:", labelTransLang2: "Übersetzung 2:", labelAutoLogMode: "📝 Auto-Protokoll:", btnSaveSettings: "Speichern",
-        modalLogsTitle: "📜 Verlauf", btnExportLogs: "💾 Backup", btnImportLogs: "📁 Öffnen", btnClearAllLogs: "🗑️ Löschen",
-        tagKo: "Koreanisch", tagEn: "Englisch", tagZh: "Chinesisch", tagDe: "Deutsch", tagNone: "Keine",
-        placeholder: "Text eingeben oder Tasten nutzen...", errMic: "Mikrofonzugriff erforderlich", errNoSTT: "Nicht unterstützt",
+        labelSpeed: "Tempo:", btnRecStart: "🎙️ Aufnahme", btnRecRecording: "🎙️ Aufnehmen...", btnRecStop: "⏹️ Stopp", btnDownload: "💾 Speichern",
+        labelList: "Sätze:", btnPrev: "▲ Vorherige", btnNext: "▼ Nächste", btnAutoScroll: "🔄 Auto-Scroll", btnAutoScrollStop: "⏸️ Stopp",
+        tagKo: "Koreanisch", tagEn: "Englisch", tagZh: "Chinesisch", tagDe: "Deutsch",
+        modalSettingsTitle: "⚙️ Einstellungen", labelLangSelect: "🌐 Menüsprache:", labelShowTrans: "Übersetzung:", labelSingleMode: "🔂 Einzel-Wiedergabe:", labelTransLang1: "Übersetzung 1:", labelTransLang2: "Übersetzung 2:", labelLogMode: "📝 Auto-Protokoll:", btnSaveSettings: "Speichern",
+        modalLogTitle: "📜 Verlauf", btnExport: "💾 Backup", btnImport: "📁 Öffnen", btnClearAll: "🗑️ Löschen",
+        placeholder: "Text eingeben...", errMic: "Mikrofonzugriff erforderlich", errNoSTT: "Nicht unterstützt",
         tripTitle: "✈️ Trip.com Angebote", tripDesc: "Buchen Sie Hotels und Flüge!", tripBtn: "Zu Trip.com ➔",
-        demoText: "Practice makes perfect! Today let's practice four languages. 欢迎! Guten Tag!"
+        demoText: "Practice makes perfect! Üben wir heute 4 Sprachen. 欢迎! Guten Tag!"
     }
 };
 
@@ -637,15 +640,15 @@ btnManageLogs.addEventListener('click', () => {
 });
 closeLogModal.addEventListener('click', () => logModal.style.display = 'none');
 
-// OCR
+// 사진 OCR
 imageInput.addEventListener('change', async (e) => {
     const file = e.target.files[0];
     if (!file) return;
 
-    ocrStatus.textContent = langRes.ocrAnalyzing;
+    ocrStatus.textContent = "📷 분석 중...";
     try {
         if (typeof Tesseract === 'undefined') {
-            alert("OCR Loading...");
+            alert("OCR 라이브러리를 불러오는 중입니다. 잠시 후 다시 시도해 주세요.");
             return;
         }
         const worker = await Tesseract.createWorker('eng+kor+chi_sim+deu');
@@ -655,28 +658,30 @@ imageInput.addEventListener('change', async (e) => {
         const text = ret.data.text.trim();
         if (text) {
             inputText.value = inputText.value ? `${inputText.value}\n\n${text}` : text;
-            ocrStatus.textContent = langRes.ocrComplete;
+            ocrStatus.textContent = "✅ 완료!";
             appendToCurrentLog(text, "PHOTO_OCR");
             saveCurrentState();
             renderSentences();
         } else {
-            ocrStatus.textContent = langRes.ocrFail;
+            ocrStatus.textContent = "❌ 글자 인식 실패";
         }
     } catch (err) {
-        ocrStatus.textContent = langRes.ocrErr;
+        ocrStatus.textContent = "❌ 분석 오류";
     }
 });
 
-// 스크롤 제어
+// 스크롤 조절
 btnScrollPrev.addEventListener('click', () => sentenceList.scrollBy({ top: -60, behavior: 'smooth' }));
 btnScrollNext.addEventListener('click', () => sentenceList.scrollBy({ top: 60, behavior: 'smooth' }));
 
 btnAutoScrollToggle.addEventListener('click', () => {
     isAutoScroll = !isAutoScroll;
     if (isAutoScroll) {
+        btnAutoScrollToggle.textContent = langRes.btnAutoScrollStop;
         btnAutoScrollToggle.style.background = "#dc2626";
         autoScrollInterval = setInterval(() => sentenceList.scrollBy({ top: 40, behavior: 'smooth' }), 2000);
     } else {
+        btnAutoScrollToggle.textContent = langRes.btnAutoScroll;
         btnAutoScrollToggle.style.background = "#2563eb";
         clearInterval(autoScrollInterval);
     }
@@ -713,7 +718,7 @@ function renderLogHistory() {
     logHistoryList.innerHTML = '';
 
     if (logs.length === 0) {
-        logHistoryList.innerHTML = '<p style="text-align:center; color:#64748b; padding:1rem;">No Records.</p>';
+        logHistoryList.innerHTML = '<p style="text-align:center; color:#64748b; padding:1rem;">기록이 없습니다.</p>';
         return;
     }
 
@@ -724,13 +729,13 @@ function renderLogHistory() {
 
         itemCard.innerHTML = `
             <div style="display:flex; justify-content:space-between; margin-bottom:0.5rem; font-size:0.85rem; color:#475569;">
-                <span><b>📅 ${logItem.date}</b> (${logItem.entries.length})</span>
+                <span><b>📅 ${logItem.date}</b> (${logItem.entries.length}개)</span>
                 <div>
-                    <button onclick="loadLogToInput(${index})" style="padding:0.2rem 0.5rem;">Load</button>
-                    <button onclick="deleteSingleLog(${index})" style="padding:0.2rem 0.5rem; background:#dc2626; color:white; border:none; border-radius:4px;">Del</button>
+                    <button onclick="loadLogToInput(${index})" style="padding:0.2rem 0.5rem;">불러오기</button>
+                    <button onclick="deleteSingleLog(${index})" style="padding:0.2rem 0.5rem; background:#dc2626; color:white; border:none; border-radius:4px;">삭제</button>
                 </div>
             </div>
-            <div style="font-size:0.88rem; max-height:100px; overflow-y:auto; background:white; padding:0.5rem; border-radius:4px;">
+            <div style="font-size:0.9rem; max-height:100px; overflow-y:auto; background:white; padding:0.5rem; border-radius:4px;">
                 ${entriesHtml}
             </div>
         `;
@@ -748,15 +753,19 @@ window.loadLogToInput = function(index) {
 };
 
 window.deleteSingleLog = function(index) {
-    let logs = getLocalLogs();
-    logs.splice(index, 1);
-    saveLocalLogs(logs);
-    renderLogHistory();
+    if (confirm("이 기록을 삭제하시겠습니까?")) {
+        let logs = getLocalLogs();
+        logs.splice(index, 1);
+        saveLocalLogs(logs);
+        renderLogHistory();
+    }
 };
 
 btnClearAllLogs.addEventListener('click', () => {
-    localStorage.removeItem('app_dialogue_logs');
-    renderLogHistory();
+    if (confirm("모든 기록을 전체 삭제하시겠습니까?")) {
+        localStorage.removeItem('app_dialogue_logs');
+        renderLogHistory();
+    }
 });
 
 btnExportLogs.addEventListener('click', () => {
@@ -781,13 +790,14 @@ logFileInput.addEventListener('change', (e) => {
             if (Array.isArray(imported)) {
                 saveLocalLogs(imported);
                 renderLogHistory();
+                alert("불러오기 완료!");
             }
-        } catch (err) {}
+        } catch (err) { alert("유효하지 않은 파일입니다."); }
     };
     reader.readAsText(file);
 });
 
-// 번역 및 설정
+// 기본 번역 언어 매핑
 function applyMenuTranslationRules(menuLang) {
     if (menuLang === 'ko') { transLangSelect1.value = 'ko'; transLangSelect2.value = 'en'; }
     else if (menuLang === 'zh') { transLangSelect1.value = 'zh'; transLangSelect2.value = 'en'; }
@@ -831,7 +841,7 @@ function saveCurrentState() {
     localStorage.setItem('app_trans_lang2', transLangSelect2.value);
 }
 
-// 전체 메인 화면 UI 요소 다국어 변경
+// 다국어 UI 완전 전환
 function updateLanguage(lang, autoUpdateDefaults = false) {
     currentLang = lang;
     langRes = i18n[lang];
@@ -839,50 +849,49 @@ function updateLanguage(lang, autoUpdateDefaults = false) {
 
     document.getElementById('docTitle').textContent = langRes.title;
     document.getElementById('uiTitle').textContent = langRes.title;
-    document.getElementById('uiBtnSettings').textContent = langRes.btnSettings;
-    document.getElementById('uiBtnLogs').textContent = langRes.btnLogs;
-    document.getElementById('uiLogModeLabel').textContent = langRes.logModeLabel;
-    document.getElementById('uiLabelInput').textContent = langRes.labelInput;
-    document.getElementById('uiBtnClear').textContent = langRes.btnClear;
+    document.getElementById('btnOpenSettings').textContent = langRes.btnSettings;
+    document.getElementById('btnManageLogs').textContent = langRes.btnLogs;
+    document.getElementById('uiLogBarText').textContent = langRes.logBarText;
 
+    document.getElementById('uiLabelInput').textContent = langRes.labelInput;
+    document.getElementById('uiLabelPhoto').textContent = langRes.labelPhoto;
+    document.getElementById('uiLabelSpeed').textContent = langRes.labelSpeed;
+    document.getElementById('uiLabelList').textContent = langRes.labelList;
+
+    document.getElementById('btnScrollPrev').textContent = langRes.btnPrev;
+    document.getElementById('btnScrollNext').textContent = langRes.btnNext;
+    document.getElementById('btnAutoScrollToggle').textContent = isAutoScroll ? langRes.btnAutoScrollStop : langRes.btnAutoScroll;
+
+    document.getElementById('uiModalSettingsTitle').textContent = langRes.modalSettingsTitle;
+    document.getElementById('uiLangLabel').textContent = langRes.labelLangSelect;
+    document.getElementById('uiLabelShowTrans').textContent = langRes.labelShowTrans;
+    document.getElementById('uiLabelSingleMode').textContent = langRes.labelSingleMode;
+    document.getElementById('uiLabelTransLang1').textContent = langRes.labelTransLang1;
+    document.getElementById('uiLabelTransLang2').textContent = langRes.labelTransLang2;
+    document.getElementById('uiLabelLogMode').textContent = langRes.labelLogMode;
+    document.getElementById('btnSaveSettings').textContent = langRes.btnSaveSettings;
+
+    document.getElementById('uiModalLogTitle').textContent = langRes.modalLogTitle;
+    document.getElementById('btnExportLogs').textContent = langRes.btnExport;
+    document.getElementById('btnImportLogs').textContent = langRes.btnImport;
+    document.getElementById('btnClearAllLogs').textContent = langRes.btnClearAll;
+
+    document.getElementById('uiTripTitle').textContent = langRes.tripTitle;
+    document.getElementById('uiTripDesc').textContent = langRes.tripDesc;
+    document.getElementById('uiTripBtn').textContent = langRes.tripBtn;
+
+    btnClear.textContent = langRes.btnClear;
     btnSTTEn.textContent = langRes.btnSTTEn;
     btnSTTKo.textContent = langRes.btnSTTKo;
     btnSTTZh.textContent = langRes.btnSTTZh;
     btnSTTDe.textContent = langRes.btnSTTDe;
 
-    document.getElementById('uiBtnPhoto').textContent = langRes.btnPhoto;
-
     btnPlay.textContent = isPlaying ? langRes.btnPlayActive : langRes.btnPlay;
     btnPause.textContent = langRes.btnPause;
     btnStop.textContent = langRes.btnStop;
-    document.getElementById('uiLabelSpeed').textContent = langRes.labelSpeed;
-
     btnRecStart.textContent = langRes.btnRecStart;
     btnRecStop.textContent = langRes.btnRecStop;
     btnDownload.textContent = langRes.btnDownload;
-
-    document.getElementById('uiLabelList').textContent = langRes.labelList;
-    document.getElementById('uiBtnPrev').textContent = langRes.btnPrev;
-    document.getElementById('uiBtnNext').textContent = langRes.btnNext;
-    document.getElementById('uiBtnAutoScroll').textContent = langRes.btnAutoScroll;
-
-    document.getElementById('uiModalSettingsTitle').textContent = langRes.modalSettingsTitle;
-    document.getElementById('uiLangLabel').textContent = langRes.langLabel;
-    document.getElementById('uiLabelShowTrans').textContent = langRes.labelShowTrans;
-    document.getElementById('uiLabelSingleMode').textContent = langRes.labelSingleMode;
-    document.getElementById('uiLabelTransLang1').textContent = langRes.labelTransLang1;
-    document.getElementById('uiLabelTransLang2').textContent = langRes.labelTransLang2;
-    document.getElementById('uiLabelAutoLogMode').textContent = langRes.labelAutoLogMode;
-    btnSaveSettings.textContent = langRes.btnSaveSettings;
-
-    document.getElementById('uiModalLogsTitle').textContent = langRes.modalLogsTitle;
-    btnExportLogs.textContent = langRes.btnExportLogs;
-    btnImportLogs.textContent = langRes.btnImportLogs;
-    btnClearAllLogs.textContent = langRes.btnClearAllLogs;
-
-    document.getElementById('uiTripTitle').textContent = langRes.tripTitle;
-    document.getElementById('uiTripDesc').textContent = langRes.tripDesc;
-    document.getElementById('uiTripBtn').textContent = langRes.tripBtn;
 
     inputText.placeholder = langRes.placeholder;
     saveCurrentState();
@@ -928,14 +937,31 @@ function loadVoices() { voices = synth.getVoices(); }
 loadVoices();
 if (speechSynthesis.onvoiceschanged !== undefined) speechSynthesis.onvoiceschanged = loadVoices;
 
+// [버그 수정 완료] 표준 언어 코드 정규화
+function normalizeLangCode(code) {
+    if (!code) return 'en-US';
+    const clean = code.toString().toLowerCase().trim();
+    if (clean.startsWith('en') || clean.includes('english')) return 'en-US';
+    if (clean.startsWith('ko') || clean.includes('korean') || clean.includes('한국어')) return 'ko-KR';
+    if (clean.startsWith('zh') || clean.includes('chinese') || clean.includes('중국어')) return 'zh-CN';
+    if (clean.startsWith('de') || clean.includes('deutsch') || clean.includes('독일어')) return 'de-DE';
+    return 'en-US';
+}
+
+// [버그 수정 완료] TTS 음성 엔진 정밀 검색
 function getBestVoice(langCode) {
     if (!voices || voices.length === 0) voices = synth.getVoices();
-    const langMap = { 'en': 'en-US', 'ko': 'ko-KR', 'zh': 'zh-CN', 'de': 'de-DE' };
-    const target = langMap[langCode] || 'en-US';
-    let matched = voices.filter(v => v.lang.replace('_', '-').toLowerCase().startsWith(target.toLowerCase()));
-    if (langCode === 'zh' && matched.length === 0) matched = voices.filter(v => v.lang.toLowerCase().startsWith('zh'));
+    const targetTag = normalizeLangCode(langCode);
+    const prefix = targetTag.split('-')[0];
+
+    let matched = voices.filter(v => v.lang.replace('_', '-').toLowerCase() === targetTag.toLowerCase());
+    if (matched.length === 0) {
+        matched = voices.filter(v => v.lang.replace('_', '-').toLowerCase().startsWith(prefix));
+    }
+
+    if (matched.length === 0) return null;
     const best = matched.find(v => v.name.includes('Natural') || v.name.includes('Online') || v.name.includes('Google'));
-    return best || matched[0] || null;
+    return best || matched[0];
 }
 
 async function translateText(text, targetLang) {
@@ -976,8 +1002,7 @@ function parseSentences(text) {
 }
 
 function createSentenceObj(text, langCode) {
-    const langMap = { 'en': 'en-US', 'ko': 'ko-KR', 'zh': 'zh-CN', 'de': 'de-DE' };
-    return { text, langCode, lang: langMap[langCode], translation1: '', translation2: '' };
+    return { text, langCode, lang: normalizeLangCode(langCode), translation1: '', translation2: '' };
 }
 
 async function renderSentences() {
@@ -1042,19 +1067,24 @@ async function renderSentences() {
     sentenceList.appendChild(fragment);
 }
 
+// [버그 수정 완료] 개별 단독 발음 재생 함수
 window.playSingleLanguageText = function(encodedText, langCode) {
     const text = decodeURIComponent(encodedText);
+    if (!text || !text.trim()) return;
+
     synth.cancel();
 
-    const langMap = { 'en': 'en-US', 'ko': 'ko-KR', 'zh': 'zh-CN', 'de': 'de-DE' };
+    const targetLangTag = normalizeLangCode(langCode);
     const utterance = new SpeechSynthesisUtterance(text);
-    utterance.lang = langMap[langCode] || 'en-US';
-    utterance.rate = parseFloat(rateInput.value);
+    utterance.lang = targetLangTag;
+    utterance.rate = parseFloat(rateInput ? rateInput.value : 1.0);
 
-    const voice = getBestVoice(langCode);
+    const voice = getBestVoice(targetLangTag);
     if (voice) utterance.voice = voice;
 
-    synth.speak(utterance);
+    setTimeout(() => {
+        synth.speak(utterance);
+    }, 50);
 };
 
 function updateActiveCard(index) {
@@ -1079,10 +1109,9 @@ async function playNative(index) {
     const showTrans = toggleTrans ? toggleTrans.checked : true;
     const targetLang1 = transLangSelect1.value;
     const targetLang2 = transLangSelect2.value;
-    const langMap = { 'en': 'en-US', 'ko': 'ko-KR', 'zh': 'zh-CN', 'de': 'de-DE' };
 
     const origUtterance = new SpeechSynthesisUtterance(current.text);
-    origUtterance.lang = current.lang;
+    origUtterance.lang = normalizeLangCode(current.langCode);
     origUtterance.rate = parseFloat(rateInput.value);
     const origVoice = getBestVoice(current.langCode);
     if (origVoice) origUtterance.voice = origVoice;
@@ -1092,7 +1121,7 @@ async function playNative(index) {
     if (showTrans) {
         if (current.translation1) {
             const u1 = new SpeechSynthesisUtterance(current.translation1);
-            u1.lang = langMap[targetLang1];
+            u1.lang = normalizeLangCode(targetLang1);
             u1.rate = parseFloat(rateInput.value);
             const v1 = getBestVoice(targetLang1);
             if (v1) u1.voice = v1;
@@ -1100,7 +1129,7 @@ async function playNative(index) {
         }
         if (current.translation2) {
             const u2 = new SpeechSynthesisUtterance(current.translation2);
-            u2.lang = langMap[targetLang2];
+            u2.lang = normalizeLangCode(targetLang2);
             u2.rate = parseFloat(rateInput.value);
             const v2 = getBestVoice(targetLang2);
             if (v2) u2.voice = v2;
@@ -1137,7 +1166,7 @@ function startSpeechRecognition(langMode, btnElement, sourceLangName) {
     recognition.lang = langMode;
     recognition.interimResults = false;
 
-    try { recognition.start(); btnElement.style.opacity = '0.7'; } catch (e) { recognition.stop(); }
+    try { recognition.start(); btnElement.textContent = langRes.btnSTTListening; btnElement.style.opacity = '0.7'; } catch (e) { recognition.stop(); }
 
     recognition.onresult = async (event) => {
         const spokenText = event.results[0][0].transcript;
@@ -1155,6 +1184,10 @@ function startSpeechRecognition(langMode, btnElement, sourceLangName) {
 }
 
 function resetSTTButtons() {
+    btnSTTEn.textContent = langRes.btnSTTEn;
+    btnSTTKo.textContent = langRes.btnSTTKo;
+    btnSTTZh.textContent = langRes.btnSTTZh;
+    btnSTTDe.textContent = langRes.btnSTTDe;
     btnSTTEn.style.opacity = '1.0';
     btnSTTKo.style.opacity = '1.0';
     btnSTTZh.style.opacity = '1.0';
@@ -1176,10 +1209,10 @@ btnRecStart.addEventListener('click', async () => {
         mediaRecorder.onstop = () => {
             const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
             const audioUrl = URL.createObjectURL(audioBlob);
-            audioPlayback.src = audioUrl; audioPlayback.style.display = 'block';
+            audioPlayback.src = audioUrl; audioPlayback.style.display = 'inline-block';
             btnDownload.href = audioUrl;
             btnDownload.download = `voice_${Date.now()}.webm`;
-            btnDownload.style.display = 'block';
+            btnDownload.style.display = 'inline-block';
         };
         mediaRecorder.start();
         btnRecStart.disabled = true; btnRecStop.disabled = false;
@@ -1210,7 +1243,7 @@ btnPlay.addEventListener('click', startPlayback);
 btnPause.addEventListener('click', pausePlayback);
 btnStop.addEventListener('click', stopPlayback);
 
-// 초기화
+// 초기 실행
 loadSavedState();
 updateLanguage(currentLang, false);
 </script>
